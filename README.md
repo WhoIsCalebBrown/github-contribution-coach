@@ -14,6 +14,7 @@ you.
   over a configurable period;
 - recommends the next category where real participation is missing;
 - lists pull requests where your review is requested;
+- surfaces recent pull requests in projects you follow as review candidates;
 - finds `help wanted` and `good first issue` work in projects you choose;
 - scans local Git repositories for uncommitted or unpushed work that could
   become an upstream contribution.

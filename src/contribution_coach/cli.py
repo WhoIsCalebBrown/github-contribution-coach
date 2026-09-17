@@ -38,20 +38,30 @@ def status_command(client: GitHubClient, days: int, automated_repositories: list
 def opportunities_command(client: GitHubClient, repositories: list[str], limit: int) -> int:
     login = client.login()
     opportunities = client.search(
-        f"is:pr is:open archived:false review-requested:{login}", "review", limit
+        f"is:pr is:open review-requested:{login}", "review", limit
     )
-    for repository in repositories:
+    if repositories:
+        repository_scope = " ".join(f"repo:{repository}" for repository in repositories)
         opportunities.extend(
             client.search(
-                f'repo:{repository} is:issue is:open label:"help wanted","good first issue"',
-                "issue",
+                f"{repository_scope} is:pr is:open -author:{login} sort:updated-desc",
+                "review candidate",
                 limit,
             )
         )
-    if not opportunities:
-        print("No configured opportunities found. Add repositories with `contribution-coach init`.")
+        for label in ("help wanted", "good first issue"):
+            opportunities.extend(
+                client.search(
+                    f'{repository_scope} is:issue is:open label:"{label}"',
+                    "issue",
+                    limit,
+                )
+            )
+    unique = {opportunity.url: opportunity for opportunity in opportunities}
+    if not unique:
+        print("No current review requests or labeled opportunities were found.")
         return 0
-    for opportunity in opportunities:
+    for opportunity in unique.values():
         print(f"[{opportunity.kind}] {opportunity.repository}: {opportunity.title}\n  {opportunity.url}")
     return 0
 
