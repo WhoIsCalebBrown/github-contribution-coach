@@ -31,6 +31,13 @@ python -m venv .venv
 .venv/bin/contribution-coach init
 ```
 
+Or install the CLI directly with `pipx`:
+
+```bash
+pipx install git+https://github.com/WhoIsCalebBrown/github-contribution-coach.git
+contribution-coach init
+```
+
 Edit `~/.config/contribution-coach/config.toml`:
 
 ```toml
